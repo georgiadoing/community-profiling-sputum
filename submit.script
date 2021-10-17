@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#SBATCH -J compro_spu
+#SBATCH -o compro_spu_%j.txt
+#SBATCH -e compro_spu_%j.err
+#SBATCH --mail-type=END,FAIL
+##SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=02:00:00
+
+#export OMP_NUM_THREADS=6
+cd ~/community_profiling_sputum/
+
+conda activate qiime2-2021.4
+manifest_file="manifest.csv"
+
+
+qiime tools import   \
+  --type 'SampleData[PairedEndSequencesWithQuality]'   \
+  --input-path 16S_manifest.csv   \
+  --output-path 16S-demux.qza   \
+  --input-format PairedEndFastqManifestPhred33
+
+qiime demux summarize \
+  --i-data 16S-demux.qza \
+  --o-visualization 16S-demux-vis.qzv
+
+qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs 16S-demux.qza \
+  --p-trim-left-f 0 --p-trim-left-r 0 \
+  --p-trunc-len-f 0 --p-trunc-len-r 0 \
+  --p-min-overlap 12 \
+  --o-representative-sequences 16S-rep-seqs-dada2.qza \
+  --o-table 16S-table-dada2.qza \
+  --o-denoising-stats 16S-stats-dada2.qza
+
+
