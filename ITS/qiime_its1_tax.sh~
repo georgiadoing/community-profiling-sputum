@@ -1,0 +1,38 @@
+#!/bin/bash -l
+
+#SBATCH -J compro_spu
+#SBATCH -o compro_spu_%j.txt
+#SBATCH -e compro_spu_%j.err
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mem=32G
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=10:00:00
+
+
+cd ~/community_profiling_sputum/
+
+conda activate qiime2-2021.4
+
+
+out_dir="/dartfs-hpc/scratch/f002bx6/qiime_out"
+
+qiime feature-classifier classify-sklearn \
+  --i-classifier $out_dir/gg-13-8-99-515-806-nb-classifier.qza \
+  --i-reads $out_dir/rep-seqs.qza \
+  --o-classification $out_dir/taxonomy.qza
+
+qiime metadata tabulate \
+  --m-input-file $out_dir/taxonomy.qza \
+  --o-visualization $out_dir/taxonomy.qzv
+
+qiime taxa barplot \
+  --i-table $out_dir/16S-table-dada2.qza \
+  --i-taxonomy $out_dir/taxonomy.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization $out_dir/taxa-bar-plots.qzv
+
+#qiime2rename_tree.pl metadata.tsv $out_dir/exported-tree/tree.nwk >$out_dir/trees.nwk
+
+
+
