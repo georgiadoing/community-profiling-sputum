@@ -1,0 +1,7 @@
+Saved Visualization to: /dartfs-hpc/scratch/f002bx6/qiime_out/table.qzv
+Saved Visualization to: /dartfs-hpc/scratch/f002bx6/qiime_out/rep-seqs.qzv
+Saved FeatureData[AlignedSequence] to: /dartfs-hpc/scratch/f002bx6/qiime_out/aligned-rep-seqs.qza
+Saved FeatureData[AlignedSequence] to: /dartfs-hpc/scratch/f002bx6/qiime_out/masked-aligned-rep-seqs.qza
+Saved Phylogeny[Unrooted] to: /dartfs-hpc/scratch/f002bx6/qiime_out/unrooted-tree.qza
+Saved Phylogeny[Rooted] to: /dartfs-hpc/scratch/f002bx6/qiime_out/rooted-tree.qza
+Exported /dartfs-hpc/scratch/f002bx6/qiime_out/rooted-tree.qza as NewickDirectoryFormat to directory /dartfs-hpc/scratch/f002bx6/qiime_out/exported-tree
