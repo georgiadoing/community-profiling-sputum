@@ -1,0 +1,38 @@
+#!/bin/bash -l
+
+#SBATCH -J compro_spu
+#SBATCH -o compro_spu_%j.txt
+#SBATCH -e compro_spu_%j.err
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mem=32G
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --time=10:00:00
+
+
+cd ~/community_profiling_sputum/
+
+conda activate qiime2-2021.4
+
+manifest_file="manifest.csv"
+out_dir="/dartfs-hpc/scratch/f002bx6/qiime_out"
+
+qiime tools import   \
+  --type 'SampleData[PairedEndSequencesWithQuality]'   \
+  --input-path $manifest_file   \
+  --output-path $out_dir/16S-demux.qza   \
+  --input-format PairedEndFastqManifestPhred33
+
+qiime demux summarize \
+  --i-data $out_dir/16S-demux.qza \
+  --o-visualization $out_dir/16S-demux-vis.qzv
+
+qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs $out_dir/16S-demux.qza \
+  --p-trim-left-f 0 --p-trim-left-r 0 \
+  --p-trunc-len-f 0 --p-trunc-len-r 0 \
+  --p-min-overlap 4 \
+  --p-n-threads 24 \
+  --o-table $out_dir/16S-table-dada2.qza \
+  --o-representative-sequences $out_dir/16S-rep-seqs-dada2.qza \
+  --o-denoising-stats $out_dir/16S-stats-dada2.qza
